@@ -1,0 +1,177 @@
+# class.awkf
+#
+# md series 2
+#
+# class.awkf defines the 'class' of a molecule
+# given its empirical formula.
+#
+#
+# (c) 1999 cameron abrams
+#
+# Class Number		Molecules in Class
+# ============		==================
+# 	 1		F
+#	 2		F2
+#	 3		C
+#	 4		CF
+#	 5		CF2
+#	 6		CF3
+#	 7 		CF4
+#	 8 		Cm,      1<m<5, "bare C-oligomers"
+#	 9		CmFx,    1<m<5, "fluorinated C-oligomers"
+#	10		Cn,      n>4,   "bare C-polymers"
+#	11		CnFx,    n>4,   "fluorinated C-polymers"
+# 	12		Si
+#	13		Sim,     1<m<5, "bare Si-oligomers"
+#	14		Sin,     n>4,   "bare Si-polymers"
+#	15		SiF
+#	16		SiF2
+#	17		SiF3
+#	18		SiF4
+#	19		SimFx,   1<m<5, "fluorinated Si-oligomers"
+#	20		SinFx,   n>4,   "fluorinated Si-polymers"
+#	21		SiCm,    1<m<5, "bare Si-1 C-oligomers"
+#	22		SiCn,    n>4,   "bare Si-1 C-polymers"
+#	23		SimCx,   1<m<5, "bare C-x Si-oligomers"
+#	24		SinCx,   n>4,   "bare C-x Si-polymers"
+#	25		SiCmFx,  1<m<5, "fluorinated Si-1 C-oligomers"
+#	26		SiCnFx,  n>4,   "fluorinated Si-1 C-polymers"
+#	27		SimCxFy, 1<m<5, "large molecule, low Si"
+#	28		SinCxFy, n>4,   "large molecule, high Si"
+#  	29		F3, "fluorine trimer" (unstable->F1+F2)
+#	30		F4, "fluorine tetramer" (unstable->2*F2)
+#	99		other
+
+function init_classnames (classnames)
+{
+    classnames[1] = "F";
+    classnames[2] = "F2";
+    classnames[3] = "C";
+    classnames[4] = "CF";
+    classnames[5] = "CF2";
+    classnames[6] = "CF3";
+    classnames[7] = "CF4";
+    classnames[8] = "Cm";
+    classnames[9] = "CmFx";
+    classnames[10] = "Cn";
+    classnames[11] = "CnFx";
+    classnames[12] = "Si";
+    classnames[13] = "Sim";
+    classnames[14] = "Sin";
+    classnames[15] = "SiF";
+    classnames[16] = "SiF2";
+    classnames[17] = "SiF3";
+    classnames[18] = "SiF4";
+    classnames[19] = "SimFx";
+    classnames[20] = "SinFx";
+    classnames[21] = "SiCm";
+    classnames[22] = "SiCn";
+    classnames[23] = "SimCx";
+    classnames[24] = "SinCx";
+    classnames[25] = "SiCmFx";
+    classnames[26] = "SiCnFx";
+    classnames[27] = "SimCxFy";
+    classnames[28] = "SinCxFy";
+    classnames[29] = "F3";
+    classnames[30] = "F4";
+    classnames[31] = "other";
+
+    return;
+}
+function molclass (nf,nc,nsi) {  
+#   printf("dbg-000 (mc) nf(%i) nc(%i) nsi(%i)\n",nf,nc,nsi); 
+   class=0;
+   if (nsi==0)
+   {
+      if (nc==0)
+      {
+	 # F,F2,Fn classes are assigned
+         if (nf==1) class=1;
+         else if (nf==2) class=2;
+         else if (nf==3) class=29;
+         else if (nf==4) class=30;
+         else class=99;
+      }
+      else
+      {
+         if (nc==1)
+         {
+           # C, CF, CF2, CF3, CF4 classes are assigned
+           if (nf==0) class=3;
+           else if (nf==1) class=4;
+           else if (nf==2) class=5;
+           else if (nf==3) class=6;
+           else if (nf==4) class=7;
+           else class=99;
+ 	 }
+	 else
+	 {
+	   if (nc<5)
+           {
+ 	      # (C2, C3, C4) class, (C2Fx,C3Fx,C4Fx) class
+              if (nf==0) class=8;
+              else class=9;
+	   }
+	   else
+           {
+	      # (Cn,n>4) class, (CnFx,n>4) class
+              if (nf==0) class=10;
+              else class=11;
+           }
+	 }
+      }
+   }
+   else if (nsi==1)
+   {
+      if (nc==0)
+      {
+	if (nf==0) class=12;
+	else if (nf==1) class=15;
+	else if (nf==2) class=16;
+	else if (nf==3) class=17;
+	else if (nf==4) class=18;
+	else class=99;
+      }
+      else if (nc<5)
+      {
+	if (nf==0) class=21;
+	else class=25;
+      }
+      else
+      {
+	if (nf==0) class=22;
+	else class=26;
+      }
+   }
+   else
+   {
+      if (nc==0)
+      {
+	if (nf==0)
+	{
+	  if (nsi<5) class=13;
+	  else class=14;
+	}
+	else 
+	{
+	  if (nsi<5) class=19;
+	  else class=20;
+	}
+      }
+      else
+      {
+	if (nsi<5)
+	{
+	  if (nf==0) class=23;
+	  else class=27;
+        }
+        else
+        {
+	  if (nf==0) class=24;
+	  else class=28;
+        }
+      }
+   }
+   return class;
+}
+
